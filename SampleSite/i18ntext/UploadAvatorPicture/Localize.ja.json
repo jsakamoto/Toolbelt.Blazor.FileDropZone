@@ -1,0 +1,11 @@
+{
+  "Please_upload_your_avator_picture": "アバター画像ファイルを選択するか、ここに<b>ドラッグ&amp;ドロップ</b>して、アップロードしてください",
+  "Avatar_picture_file": "アバター画像ファイル",
+  "No_file_chosen": "ファイルが選択されていません",
+  "Choose_File": "ファイル選択",
+  "Max_allowed_file_size_is_512KB": "ファイルサイズは 512KB までです。",
+  "Upload": "アップロード",
+  "Chosed_file_is_not_picture": "画像ファイルではありません。",
+  "Chosed_file_is_too_large": "ファイルサイズが大きすぎます。",
+  "Success": "成功!"
+}

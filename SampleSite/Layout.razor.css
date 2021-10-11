@@ -1,0 +1,35 @@
+img.package-icon {
+    width: 62px;
+}
+
+::deep h1 {
+    font-size: 140%;
+}
+
+.form-area {
+    /*border: solid 1px yellow;*/
+    width: 100vw;
+    max-width: 500px;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 30px;
+}
+
+    .form-area ::deep .mud-paper {
+        padding: 1px 18px;
+    }
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+    footer select {
+        margin-left: 7px;
+    }

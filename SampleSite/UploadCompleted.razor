@@ -1,0 +1,20 @@
+﻿@page "/completed"
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
+@using SampleSite.I18nText.UploadCompleted
+
+<div class="ma-12">
+    @Localize.Upload_was_completed
+</div>
+
+<div class="ma-12">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="/">@Localize.BACK_TO_HOME</MudButton>
+</div>
+
+@code {
+    private Localize Localize = new Localize();
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.Localize = await this.I18nText.GetTextTableAsync<Localize>(this);
+    }
+}

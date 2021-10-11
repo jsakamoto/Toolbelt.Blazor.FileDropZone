@@ -1,0 +1,99 @@
+﻿@page "/"
+@using SampleSite.I18nText.UploadAvatorPicture
+@using Toolbelt.Blazor.FileDropZone
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
+@inject NavigationManager NavigationManager
+
+<div>
+    <FileDropZone class="file-drop-zone">
+
+        <MudPaper>
+
+            <div class="my-6">
+                <MudText Typo="Typo.body1">@((MarkupString)Localize.Please_upload_your_avator_picture)</MudText>
+            </div>
+
+            <div class="my-6">
+                <MudAvatar Image="@ImageUrl" Style="width:100px;height:100px;">
+                    No Image
+                </MudAvatar>
+            </div>
+
+            <div class="my-6 @(this.ErrorText == null ? "" : "error")">
+
+                <InputFile id="avatar-picture-inputfile" OnChange="OnInputFileChange" style="display:none;" />
+
+                <div class="caption">
+                    <MudText Typo="Typo.caption">@Localize.Avatar_picture_file</MudText>
+                </div>
+                <div class="avatar-picture-inputfile-container">
+                    <label for="avatar-picture-inputfile" class="selected-file-name">
+                        @SelectedFileName
+                    </label>
+                    <label for="avatar-picture-inputfile" class="mud-button-root mud-button mud-button-filled mud-button-filled-primary mud-button-filled-size-medium mud-ripple">
+                        @Localize.Choose_File
+                    </label>
+                </div>
+                <div class="mud-input-helper-text">
+                    @(this.ErrorText ?? Localize.Max_allowed_file_size_is_512KB)
+                </div>
+            </div>
+
+            <div class="my-6">
+                <MudButton Disabled="@(SelectedFile == null || ErrorText != null)" OnClick="OnClickUpload" Variant="Variant.Filled" Color="Color.Secondary">
+                    @Localize.Upload
+                </MudButton>
+            </div>
+
+        </MudPaper>
+
+    </FileDropZone>
+</div>
+
+@code {
+    private Localize Localize = new Localize();
+
+    private string ImageUrl = "";
+
+    private IBrowserFile SelectedFile = null;
+
+    private string SelectedFileName => this.SelectedFile?.Name ?? this.Localize.No_file_chosen;
+
+    private string ErrorText = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.Localize = await this.I18nText.GetTextTableAsync<Localize>(this);
+    }
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs args)
+    {
+        this.SelectedFile = args.File;
+        this.ImageUrl = "";
+        this.ErrorText = null;
+
+        if (!args.File.ContentType.StartsWith("image/"))
+        {
+            this.ErrorText = this.Localize.Chosed_file_is_not_picture;
+            return;
+        }
+        if (args.File.Size > 512000 /*512KB*/)
+        {
+            this.ErrorText = this.Localize.Chosed_file_is_too_large;
+            return;
+        }
+
+        var contentBytes = new byte[this.SelectedFile.Size];
+        using var stream = this.SelectedFile.OpenReadStream();
+        await stream.ReadAsync(contentBytes, 0, contentBytes.Length);
+
+        var contentBase64Str = Convert.ToBase64String(contentBytes);
+        var contentType = this.SelectedFile.ContentType;
+        this.ImageUrl = "data:" + contentType + ";base64," + contentBase64Str;
+    }
+
+    private void OnClickUpload()
+    {
+        NavigationManager.NavigateTo("/completed");
+    }
+}

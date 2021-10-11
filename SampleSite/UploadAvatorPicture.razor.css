@@ -1,0 +1,39 @@
+﻿::deep .file-drop-zone {
+    border: dashed 2px transparent;
+    border-radius: 6px;
+    transition: border linear 0.2s;
+}
+
+    ::deep .file-drop-zone.hover {
+        border: dashed 2px var(--mud-palette-secondary);
+    }
+
+
+.avatar-picture-inputfile-container {
+    white-space: nowrap;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: baseline;
+}
+
+.selected-file-name {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 10px;
+    border-bottom: solid 1px var(--mud-palette-lines-inputs);
+    padding: 6px 0 6px 0;
+}
+
+.error .caption {
+    color: var(--mud-palette-error);
+}
+
+.error .selected-file-name {
+    border-bottom-color: var(--mud-palette-error);
+}
+
+.error .mud-input-helper-text {
+    color: var(--mud-palette-error);
+}

@@ -1,0 +1,11 @@
+{
+  "Please_upload_your_avator_picture": "Chose or <b>drag &amp; drop</b> your avatar picture file and upload it.",
+  "Avatar_picture_file": "Avatar picture file",
+  "No_file_chosen": "No file chosen",
+  "Choose_File": "Choose File",
+  "Max_allowed_file_size_is_512KB": "Max allowed file size is 512KB.",
+  "Upload": "Upload",
+  "Chosed_file_is_not_picture": "Chosed file is not picture.",
+  "Chosed_file_is_too_large": "Chosed file is too large.",
+  "Success": "Success!"
+}

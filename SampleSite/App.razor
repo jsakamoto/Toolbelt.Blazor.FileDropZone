@@ -1,0 +1,21 @@
+<MudThemeProvider Theme="@(new MudTheme{
+    Palette = new() {
+        Primary = "#682A7B"
+    }
+})" />
+<MudSnackbarProvider />
+
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout)" />
+    </Found>
+    <NotFound>
+        <LayoutView>
+            <p>Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+
+
+@code {
+}
