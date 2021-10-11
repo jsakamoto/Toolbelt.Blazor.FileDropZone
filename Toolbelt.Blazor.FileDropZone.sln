@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleSite", "SampleSite\Sa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8B8F35DB-E33C-4086-B294-686616B19399}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\gh-pages.yml = .github\workflows\gh-pages.yml
 		LICENSE = LICENSE
 		README.md = README.md
 		RELEASE-NOTES.txt = RELEASE-NOTES.txt
