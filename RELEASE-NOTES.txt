@@ -1,2 +1,5 @@
+v.1.0.1
+- Fix: An unhandled exception occurred when the browser window was closed on Blazor server apps.
+
 v.1.0.0
 - 1st release.
