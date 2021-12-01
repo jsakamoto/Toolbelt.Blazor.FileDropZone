@@ -40,12 +40,19 @@ namespace Toolbelt.Blazor.FileDropZone
         public async ValueTask DisposeAsync()
         {
             GC.SuppressFinalize(this);
-            if (this._FileDropZoneHandler != null)
+            try
             {
-                await this._FileDropZoneHandler.InvokeVoidAsync("dispose");
-                await this._FileDropZoneHandler.DisposeAsync();
+                if (this._FileDropZoneHandler != null)
+                {
+                    await this._FileDropZoneHandler.InvokeVoidAsync("dispose");
+                    await this._FileDropZoneHandler.DisposeAsync();
+                }
+                if (this._JSModule != null) await this._JSModule.DisposeAsync();
             }
-            if (this._JSModule != null) await this._JSModule.DisposeAsync();
+#if NET6_0_OR_GREATER
+            catch (JSDisconnectedException) { }
+#endif
+            finally { }
         }
     }
 }
