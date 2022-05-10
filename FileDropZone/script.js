@@ -28,6 +28,7 @@ class FileDropZoneHandler {
     }
     onDrop(e) {
         var _a;
+        e.stopPropagation();
         e.preventDefault();
         (_a = this._dropZone) === null || _a === void 0 ? void 0 : _a.classList.remove(hover);
         this.dispatch(e.dataTransfer);

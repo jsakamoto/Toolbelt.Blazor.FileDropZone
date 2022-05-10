@@ -36,6 +36,7 @@ class FileDropZoneHandler {
 
     // Handle the paste and drop events
     private onDrop(e: DragEvent): void {
+        e.stopPropagation();
         e.preventDefault();
         this._dropZone?.classList.remove(hover);
 
