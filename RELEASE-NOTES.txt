@@ -1,3 +1,7 @@
+v.2.0.0
+- BREAKING CHANGE: stop the propagation of the "drop" event that the "FileDropZone" component handled.
+  (to avoid an edge case about the strange behavior of web browsers.)
+
 v.1.0.1
 - Fix: An unhandled exception occurred when the browser window was closed on Blazor server apps.
 
