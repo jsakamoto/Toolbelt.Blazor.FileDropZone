@@ -1,11 +1,12 @@
-export function initializeFileDropZone(dropZoneElement) {
+export const initializeFileDropZone = (dropZoneElement) => {
     return new FileDropZoneHandler(dropZoneElement);
-}
+};
 const hover = 'hover';
 class FileDropZoneHandler {
     constructor(dropZone) {
         this._disposed = false;
         this._dropZone = null;
+        this._delay = -1;
         this._dropZone = dropZone;
         this._handlers = [
             ['dragenter', this.onDragHover.bind(this)],
@@ -16,20 +17,31 @@ class FileDropZoneHandler {
         ];
         this._handlers.forEach(handler => dropZone.addEventListener(handler[0], handler[1]));
     }
+    cancelDelay() {
+        if (this._delay !== -1)
+            clearTimeout(this._delay);
+        this._delay = -1;
+    }
     onDragHover(e) {
         var _a;
         e.preventDefault();
+        this.cancelDelay();
         (_a = this._dropZone) === null || _a === void 0 ? void 0 : _a.classList.add(hover);
     }
     onDragLeave(e) {
-        var _a;
         e.preventDefault();
-        (_a = this._dropZone) === null || _a === void 0 ? void 0 : _a.classList.remove(hover);
+        this.cancelDelay();
+        this._delay = setTimeout(() => {
+            var _a;
+            this._delay = -1;
+            (_a = this._dropZone) === null || _a === void 0 ? void 0 : _a.classList.remove(hover);
+        }, 1);
     }
     onDrop(e) {
         var _a;
         e.stopPropagation();
         e.preventDefault();
+        this.cancelDelay();
         (_a = this._dropZone) === null || _a === void 0 ? void 0 : _a.classList.remove(hover);
         this.dispatch(e.dataTransfer);
     }

@@ -1,4 +1,4 @@
-﻿export function initializeFileDropZone(dropZoneElement: HTMLElement): { dispose: () => void } {
+﻿export const initializeFileDropZone = (dropZoneElement: HTMLElement): { dispose: () => void } => {
     return new FileDropZoneHandler(dropZoneElement);
 }
 
@@ -9,6 +9,7 @@ class FileDropZoneHandler {
     private _disposed: boolean = false;
     private _dropZone: HTMLElement | null = null;
     private _handlers: any[][];
+    private _delay: number = -1;
 
     constructor(
         dropZone: HTMLElement
@@ -24,20 +25,31 @@ class FileDropZoneHandler {
         this._handlers.forEach(handler => dropZone.addEventListener(handler[0] as string, handler[1] as any))
     }
 
+    private cancelDelay(): void {
+        if (this._delay !== -1) clearTimeout(this._delay);
+        this._delay = -1;
+    }
+
     private onDragHover(e: DragEvent): void {
         e.preventDefault();
+        this.cancelDelay();
         this._dropZone?.classList.add(hover);
     }
 
     private onDragLeave(e: DragEvent): void {
         e.preventDefault();
-        this._dropZone?.classList.remove(hover);
+        this.cancelDelay();
+        this._delay = setTimeout(() => {
+            this._delay = -1;
+            this._dropZone?.classList.remove(hover);
+        }, 1);
     }
 
     // Handle the paste and drop events
     private onDrop(e: DragEvent): void {
         e.stopPropagation();
         e.preventDefault();
+        this.cancelDelay();
         this._dropZone?.classList.remove(hover);
 
         // Set the files property of the input element and raise the change event
