@@ -42,7 +42,7 @@ class FileDropZoneHandler {
         this._delay = setTimeout(() => {
             this._delay = -1;
             this._dropZone?.classList.remove(hover);
-        }, 1);
+        }, 10);
     }
 
     // Handle the paste and drop events

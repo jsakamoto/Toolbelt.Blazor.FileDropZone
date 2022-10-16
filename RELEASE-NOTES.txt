@@ -1,4 +1,4 @@
-v.2.1.0
+v.2.1.1
 - Improved: Reduced flickering of the "hover" CSS class during drag-over.
 
 v.2.0.0

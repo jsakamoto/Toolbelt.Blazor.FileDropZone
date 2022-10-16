@@ -35,7 +35,7 @@ class FileDropZoneHandler {
             var _a;
             this._delay = -1;
             (_a = this._dropZone) === null || _a === void 0 ? void 0 : _a.classList.remove(hover);
-        }, 1);
+        }, 10);
     }
     onDrop(e) {
         var _a;
