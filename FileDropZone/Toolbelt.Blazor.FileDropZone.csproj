@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Toolbelt.Blazor.GetProperty.Script" Version="1.2.0" />
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
@@ -58,5 +59,7 @@
       <PackageReleaseNotes>$(PackageReleaseNotes)%0aTo see all the change logs, please visit the following URL.%0a- https://github.com/jsakamoto/Toolbelt.Blazor.FileDropZone/blob/master/RELEASE-NOTES.txt</PackageReleaseNotes>
     </PropertyGroup>
   </Target>
+
+  <Import Project="VersionInfo.targets" />
 
 </Project>

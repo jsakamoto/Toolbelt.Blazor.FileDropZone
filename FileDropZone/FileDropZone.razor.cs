@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace Toolbelt.Blazor.FileDropZone;
@@ -10,29 +9,27 @@ public partial class FileDropZone : IAsyncDisposable
 
     [Parameter] public RenderFragment ChildContent { get; set; } = null!;
 
-    private IJSObjectReference? _JSModule;
-
     private IJSObjectReference? _FileDropZoneHandler;
 
     private ElementReference _DropZoneElement;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await base.OnAfterRenderAsync(firstRender);
-        if (firstRender)
-        {
-            var assembly = this.GetType().Assembly;
-            var version = assembly
-                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
-                .InformationalVersion ?? assembly.GetName().Version?.ToString() ?? "";
-            this._JSModule = await this.JS.InvokeAsync<IJSObjectReference>(
-                "import",
-                $"./_content/Toolbelt.Blazor.FileDropZone/script.min.js?v={version}");
+        if (!firstRender) return;
 
-            this._FileDropZoneHandler = await this._JSModule.InvokeAsync<IJSObjectReference>(
-                "initializeFileDropZone",
-                this._DropZoneElement);
+        var scriptPath = "./_content/Toolbelt.Blazor.FileDropZone/script.min.js";
+        try
+        {
+            var isOnLine = await this.JS.InvokeAsync<bool>("Toolbelt.Blazor.getProperty", "navigator.onLine");
+            if (isOnLine) scriptPath += "?v=" + VersionInfo.VersionText;
         }
+        catch (JSException) { }
+
+        await using var module = await this.JS.InvokeAsync<IJSObjectReference>("import", scriptPath);
+
+        this._FileDropZoneHandler = await module.InvokeAsync<IJSObjectReference>(
+            "initializeFileDropZone",
+            this._DropZoneElement);
     }
 
     public async ValueTask DisposeAsync()
@@ -45,7 +42,6 @@ public partial class FileDropZone : IAsyncDisposable
                 await this._FileDropZoneHandler.InvokeVoidAsync("dispose");
                 await this._FileDropZoneHandler.DisposeAsync();
             }
-            if (this._JSModule != null) await this._JSModule.DisposeAsync();
         }
         catch (JSDisconnectedException) { }
     }
