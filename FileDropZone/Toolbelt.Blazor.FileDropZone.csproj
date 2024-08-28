@@ -21,6 +21,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageOutputPath>..\_dist\</PackageOutputPath>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
