@@ -1,3 +1,10 @@
+v.3.0.0
+- BREAKING CHANGE: Dropped the support for the .NET 5.0
+- Improved: Added the efficient support for .NET 8.0
+- Improved: Reduced the file size of client-side script
+- Improved: Made the client-side script more robust 
+- Improved: Enabled IL trimming for the Blazor WebAssembly
+
 v.2.1.1
 - Improved: Reduced flickering of the "hover" CSS class during drag-over.
 
