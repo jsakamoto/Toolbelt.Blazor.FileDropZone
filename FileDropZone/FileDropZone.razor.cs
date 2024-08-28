@@ -1,58 +1,52 @@
-﻿using System;
-using System.Reflection;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace Toolbelt.Blazor.FileDropZone
+namespace Toolbelt.Blazor.FileDropZone;
+
+public partial class FileDropZone : IAsyncDisposable
 {
-    public partial class FileDropZone : IAsyncDisposable
+    [Inject] private IJSRuntime JS { get; init; } = null!;
+
+    [Parameter] public RenderFragment ChildContent { get; set; } = null!;
+
+    private IJSObjectReference? _JSModule;
+
+    private IJSObjectReference? _FileDropZoneHandler;
+
+    private ElementReference _DropZoneElement;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        [Inject] private IJSRuntime JS { get; init; } = null!;
-
-        [Parameter] public RenderFragment ChildContent { get; set; } = null!;
-
-        private IJSObjectReference? _JSModule;
-
-        private IJSObjectReference? _FileDropZoneHandler;
-
-        private ElementReference _DropZoneElement;
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
         {
-            await base.OnAfterRenderAsync(firstRender);
-            if (firstRender)
-            {
-                var assembly = this.GetType().Assembly;
-                var version = assembly
-                    .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
-                    .InformationalVersion ?? assembly.GetName().Version?.ToString() ?? "";
-                this._JSModule = await this.JS.InvokeAsync<IJSObjectReference>(
-                    "import",
-                    $"./_content/Toolbelt.Blazor.FileDropZone/script.min.js?v={version}");
+            var assembly = this.GetType().Assembly;
+            var version = assembly
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+                .InformationalVersion ?? assembly.GetName().Version?.ToString() ?? "";
+            this._JSModule = await this.JS.InvokeAsync<IJSObjectReference>(
+                "import",
+                $"./_content/Toolbelt.Blazor.FileDropZone/script.min.js?v={version}");
 
-                this._FileDropZoneHandler = await this._JSModule.InvokeAsync<IJSObjectReference>(
-                    "initializeFileDropZone",
-                    this._DropZoneElement);
-            }
+            this._FileDropZoneHandler = await this._JSModule.InvokeAsync<IJSObjectReference>(
+                "initializeFileDropZone",
+                this._DropZoneElement);
         }
+    }
 
-        public async ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
+    {
+        GC.SuppressFinalize(this);
+        try
         {
-            GC.SuppressFinalize(this);
-            try
+            if (this._FileDropZoneHandler != null)
             {
-                if (this._FileDropZoneHandler != null)
-                {
-                    await this._FileDropZoneHandler.InvokeVoidAsync("dispose");
-                    await this._FileDropZoneHandler.DisposeAsync();
-                }
-                if (this._JSModule != null) await this._JSModule.DisposeAsync();
+                await this._FileDropZoneHandler.InvokeVoidAsync("dispose");
+                await this._FileDropZoneHandler.DisposeAsync();
             }
-#if NET6_0_OR_GREATER
-            catch (JSDisconnectedException) { }
-#endif
-            finally { }
+            if (this._JSModule != null) await this._JSModule.DisposeAsync();
         }
+        catch (JSDisconnectedException) { }
     }
 }
