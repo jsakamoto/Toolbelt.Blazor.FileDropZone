@@ -1,75 +1,59 @@
 export const initializeFileDropZone = (dropZoneElement) => {
-    return new FileDropZoneHandler(dropZoneElement);
-};
-const hover = 'hover';
-class FileDropZoneHandler {
-    constructor(dropZone) {
-        this._disposed = false;
-        this._dropZone = null;
-        this._delay = -1;
-        this._dropZone = dropZone;
-        this._handlers = [
-            ['dragenter', this.onDragHover.bind(this)],
-            ['dragover', this.onDragHover.bind(this)],
-            ['dragleave', this.onDragLeave.bind(this)],
-            ['drop', this.onDrop.bind(this)],
-            ['paste', this.onPaste.bind(this)]
-        ];
-        this._handlers.forEach(handler => dropZone.addEventListener(handler[0], handler[1]));
-    }
-    cancelDelay() {
-        if (this._delay !== -1)
-            clearTimeout(this._delay);
-        this._delay = -1;
-    }
-    onDragHover(e) {
-        var _a;
-        e.preventDefault();
-        this.cancelDelay();
-        (_a = this._dropZone) === null || _a === void 0 ? void 0 : _a.classList.add(hover);
-    }
-    onDragLeave(e) {
-        e.preventDefault();
-        this.cancelDelay();
-        this._delay = setTimeout(() => {
-            var _a;
-            this._delay = -1;
-            (_a = this._dropZone) === null || _a === void 0 ? void 0 : _a.classList.remove(hover);
+    const hover = 'hover';
+    const state = { t: -1 };
+    const preventDefault = (e) => e.preventDefault();
+    const removeHoverClass = () => dropZoneElement?.classList.remove(hover);
+    const cancelDelay = () => {
+        if (state.t !== -1)
+            clearTimeout(state.t);
+        state.t = -1;
+    };
+    const onDragHover = (e) => {
+        preventDefault(e);
+        cancelDelay();
+        dropZoneElement?.classList.add(hover);
+    };
+    const onDragLeave = (e) => {
+        preventDefault(e);
+        cancelDelay();
+        state.t = setTimeout(() => {
+            state.t = -1;
+            removeHoverClass();
         }, 10);
-    }
-    onDrop(e) {
-        var _a;
-        e.stopPropagation();
-        e.preventDefault();
-        this.cancelDelay();
-        (_a = this._dropZone) === null || _a === void 0 ? void 0 : _a.classList.remove(hover);
-        this.dispatch(e.dataTransfer);
-    }
-    onPaste(e) {
-        this.dispatch(e.clipboardData);
-    }
-    dispatch(dataTransfer) {
-        var _a;
+    };
+    const dispatch = (dataTransfer) => {
         if (dataTransfer === null)
             return;
-        if (this._disposed === true)
+        if (document.contains(dropZoneElement) === false)
             return;
-        if (document.contains(this._dropZone) === false)
-            return;
-        const inputFileElement = (_a = this._dropZone) === null || _a === void 0 ? void 0 : _a.querySelector('input[type=file]');
+        const inputFileElement = dropZoneElement?.querySelector('input[type=file]');
         if (inputFileElement === null)
-            throw new Error('');
+            return;
         inputFileElement.files = dataTransfer.files;
         const event = new Event('change', { bubbles: true });
         inputFileElement.dispatchEvent(event);
-    }
-    dispose() {
-        if (this._disposed === true)
-            return;
-        if (this._dropZone !== null) {
-            this._handlers.forEach(handler => this._dropZone.removeEventListener(handler[0], handler[1]));
+    };
+    const onDrop = (e) => {
+        e.stopPropagation();
+        preventDefault(e);
+        cancelDelay();
+        removeHoverClass();
+        dispatch(e.dataTransfer);
+    };
+    const onPaste = (e) => {
+        dispatch(e.clipboardData);
+    };
+    const handlers = [
+        ['dragenter', onDragHover],
+        ['dragover', onDragHover],
+        ['dragleave', onDragLeave],
+        ['drop', onDrop],
+        ['paste', onPaste]
+    ];
+    handlers.forEach(handler => dropZoneElement?.addEventListener(handler[0], handler[1]));
+    return {
+        dispose: () => {
+            handlers.forEach(handler => dropZoneElement?.removeEventListener(handler[0], handler[1]));
         }
-        this._disposed = true;
-        this._dropZone = null;
-    }
-}
+    };
+};

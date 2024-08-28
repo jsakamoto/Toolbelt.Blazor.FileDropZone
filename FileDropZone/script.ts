@@ -1,86 +1,71 @@
-﻿export const initializeFileDropZone = (dropZoneElement: HTMLElement): { dispose: () => void } => {
-    return new FileDropZoneHandler(dropZoneElement);
-}
+﻿export const initializeFileDropZone = (dropZoneElement: HTMLElement | null): { dispose: () => void } => {
 
-const hover = 'hover';
+    const hover = 'hover';
+    const state = { t: -1 };
 
-class FileDropZoneHandler {
+    const preventDefault = (e: Event): void => e.preventDefault();
+    const removeHoverClass = (): void => dropZoneElement?.classList.remove(hover);
 
-    private _disposed: boolean = false;
-    private _dropZone: HTMLElement | null = null;
-    private _handlers: any[][];
-    private _delay: number = -1;
-
-    constructor(
-        dropZone: HTMLElement
-    ) {
-        this._dropZone = dropZone;
-        this._handlers = [
-            ['dragenter', this.onDragHover.bind(this)],
-            ['dragover', this.onDragHover.bind(this)],
-            ['dragleave', this.onDragLeave.bind(this)],
-            ['drop', this.onDrop.bind(this)],
-            ['paste', this.onPaste.bind(this)]
-        ];
-        this._handlers.forEach(handler => dropZone.addEventListener(handler[0] as string, handler[1] as any))
+    const cancelDelay = (): void => {
+        if (state.t !== -1) clearTimeout(state.t);
+        state.t = -1;
     }
 
-    private cancelDelay(): void {
-        if (this._delay !== -1) clearTimeout(this._delay);
-        this._delay = -1;
+    const onDragHover = (e: DragEvent): void => {
+        preventDefault(e);
+        cancelDelay();
+        dropZoneElement?.classList.add(hover);
     }
 
-    private onDragHover(e: DragEvent): void {
-        e.preventDefault();
-        this.cancelDelay();
-        this._dropZone?.classList.add(hover);
-    }
-
-    private onDragLeave(e: DragEvent): void {
-        e.preventDefault();
-        this.cancelDelay();
-        this._delay = setTimeout(() => {
-            this._delay = -1;
-            this._dropZone?.classList.remove(hover);
+    const onDragLeave = (e: DragEvent): void => {
+        preventDefault(e);
+        cancelDelay();
+        state.t = setTimeout(() => {
+            state.t = -1;
+            removeHoverClass();
         }, 10);
     }
 
-    // Handle the paste and drop events
-    private onDrop(e: DragEvent): void {
-        e.stopPropagation();
-        e.preventDefault();
-        this.cancelDelay();
-        this._dropZone?.classList.remove(hover);
-
-        // Set the files property of the input element and raise the change event
-        this.dispatch(e.dataTransfer);
-    }
-
-    private onPaste(e: ClipboardEvent): void {
-        // Set the files property of the input element and raise the change event
-        this.dispatch(e.clipboardData);
-    }
-
-    private dispatch(dataTransfer: DataTransfer | null): void {
+    const dispatch = (dataTransfer: DataTransfer | null): void => {
         if (dataTransfer === null) return;
-        if (this._disposed === true) return;
-        if (document.contains(this._dropZone) === false) return;
+        if (document.contains(dropZoneElement) === false) return;
 
-        const inputFileElement = this._dropZone?.querySelector('input[type=file]') as HTMLInputElement | null;
-        if (inputFileElement === null) throw new Error('');
+        const inputFileElement = dropZoneElement?.querySelector('input[type=file]') as HTMLInputElement | null;
+        if (inputFileElement === null) return;
 
         inputFileElement.files = dataTransfer.files;
         const event = new Event('change', { bubbles: true });
         inputFileElement.dispatchEvent(event);
     }
 
-    public dispose(): void {
-        if (this._disposed === true) return;
-        if (this._dropZone !== null) {
-            this._handlers.forEach(handler =>
-                this._dropZone!.removeEventListener(handler[0] as string, handler[1] as any))
-        }
-        this._disposed = true;
-        this._dropZone = null;
+    // Handle the paste and drop events
+    const onDrop = (e: DragEvent): void => {
+        e.stopPropagation();
+        preventDefault(e);
+        cancelDelay();
+        removeHoverClass();
+
+        // Set the files property of the input element and raise the change event
+        dispatch(e.dataTransfer);
     }
+
+    const onPaste = (e: ClipboardEvent): void => {
+        // Set the files property of the input element and raise the change event
+        dispatch(e.clipboardData);
+    }
+
+    const handlers: ([string, (e: any) => void])[] = [
+        ['dragenter', onDragHover],
+        ['dragover', onDragHover],
+        ['dragleave', onDragLeave],
+        ['drop', onDrop],
+        ['paste', onPaste]
+    ];
+    handlers.forEach(handler => dropZoneElement?.addEventListener(handler[0], handler[1]));
+
+    return {
+        dispose: () => {
+            handlers.forEach(handler => dropZoneElement?.removeEventListener(handler[0], handler[1]));
+        }
+    };
 }
