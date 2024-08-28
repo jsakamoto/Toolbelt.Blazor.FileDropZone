@@ -75,7 +75,7 @@ And then, the component dispatches the file object that the user dropped to the 
 
 ## Supported version
 
-- .NET 5 or later is required.
+- .NET 6 or later is required.
 - Both Blazor WebAssembly and Blazor Server are supported.
 
 ## Release Note
