@@ -9,7 +9,7 @@
         <h1>@Localize.Title</h1>
         <MudSpacer />
         <MudButton StartIcon="@Icons.Custom.Brands.GitHub"
-            Link="https://github.com/jsakamoto/Toolbelt.Blazor.FileDropZone/" Target="_blank" Color="Color.Inherit">
+            Href="https://github.com/jsakamoto/Toolbelt.Blazor.FileDropZone/" Target="_blank" Color="Color.Inherit">
             @Localize.Source_Code
         </MudButton>
     </MudAppBar>
@@ -20,7 +20,7 @@
 </div>
 
 <footer>
-    <MudIcon Icon="@Icons.Filled.Language" />
+    <MudIcon Icon="@Icons.Material.Filled.Language" />
     <select @onchange="OnChangeCurrentLang">
         <option value="en" selected="@(CurrentLang == "en")">English</option>
         <option value="ja" selected="@(CurrentLang == "ja")">日本語</option>
@@ -28,9 +28,9 @@
 </footer>
 
 @code {
-    private Localize Localize = new Localize();
+    private Localize Localize = new();
 
-    private string CurrentLang;
+    private string? CurrentLang;
 
     protected override async Task OnInitializedAsync()
     {
@@ -50,7 +50,7 @@
 
     private async Task OnChangeCurrentLang(ChangeEventArgs args)
     {
-        CurrentLang = args.Value as string;
+        CurrentLang = args.Value?.ToString() ?? "en";
         await I18nText.SetCurrentLanguageAsync(CurrentLang);
     }
 }

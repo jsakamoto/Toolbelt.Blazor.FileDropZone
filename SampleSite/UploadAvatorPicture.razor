@@ -14,8 +14,15 @@
             </div>
 
             <div class="my-6">
-                <MudAvatar Image="@ImageUrl" Style="width:100px;height:100px;">
-                    No Image
+                <MudAvatar Style="width:100px;height:100px;">
+                    @if (ImageUrl != "")
+                    {
+                        <img src="@ImageUrl" style="width: 100%; height: 100%; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <text>No Image</text>
+                    }
                 </MudAvatar>
             </div>
 
@@ -51,15 +58,15 @@
 </div>
 
 @code {
-    private Localize Localize = new Localize();
+    private Localize Localize = new();
 
     private string ImageUrl = "";
 
-    private IBrowserFile SelectedFile = null;
+    private IBrowserFile? SelectedFile = null;
 
     private string SelectedFileName => this.SelectedFile?.Name ?? this.Localize.No_file_chosen;
 
-    private string ErrorText = null;
+    private string? ErrorText = null;
 
     protected override async Task OnInitializedAsync()
     {
