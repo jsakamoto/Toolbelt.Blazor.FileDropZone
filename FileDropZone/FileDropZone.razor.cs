@@ -18,31 +18,45 @@ public partial class FileDropZone : IAsyncDisposable
         if (!firstRender) return;
 
         var scriptPath = "./_content/Toolbelt.Blazor.FileDropZone/script.min.js";
-        try
-        {
-            var isOnLine = await this.JS.InvokeAsync<bool>("Toolbelt.Blazor.getProperty", "navigator.onLine");
-            if (isOnLine) scriptPath += "?v=" + VersionInfo.VersionText;
-        }
-        catch (JSException) { }
+        var isOnLine = await RunAsync(this.JS, js => js.InvokeAsync<bool>("Toolbelt.Blazor.getProperty", "navigator.onLine"), false);
+        if (isOnLine) scriptPath += "?v=" + VersionInfo.VersionText;
 
-        await using var module = await this.JS.InvokeAsync<IJSObjectReference>("import", scriptPath);
+        var module = await RunAsync(this.JS, js => js.InvokeAsync<IJSObjectReference?>("import", scriptPath), default);
 
-        this._FileDropZoneHandler = await module.InvokeAsync<IJSObjectReference>(
-            "initializeFileDropZone",
-            this._DropZoneElement);
+        this._FileDropZoneHandler = await RunAndDisposeAsync(
+            module,
+            js => js.InvokeAsync<IJSObjectReference?>("initializeFileDropZone", this._DropZoneElement),
+            default);
     }
 
     public async ValueTask DisposeAsync()
     {
         GC.SuppressFinalize(this);
+        await RunAndDisposeAsync(
+            this._FileDropZoneHandler,
+            js => js.InvokeAsync<object?>("dispose"),
+            default);
+    }
+
+    private static async ValueTask<TResult> RunAsync<TJSObject, TResult>(TJSObject? jSObject, Func<TJSObject, ValueTask<TResult>> action, TResult defaultValue)
+    {
+        if (jSObject == null) return defaultValue;
         try
         {
-            if (this._FileDropZoneHandler != null)
-            {
-                await this._FileDropZoneHandler.InvokeVoidAsync("dispose");
-                await this._FileDropZoneHandler.DisposeAsync();
-            }
+            return await action.Invoke(jSObject);
         }
-        catch (JSDisconnectedException) { }
+        catch (JSException) { return defaultValue; }
+        catch (JSDisconnectedException) { return defaultValue; }
+    }
+
+    private static async ValueTask<TResult> RunAndDisposeAsync<TJSObject, TResult>(TJSObject? jSObject, Func<TJSObject, ValueTask<TResult>> action, TResult defaultValue) where TJSObject : IAsyncDisposable
+    {
+        var result = await RunAsync(jSObject, action, defaultValue);
+        await RunAsync(jSObject, async js =>
+        {
+            await js.DisposeAsync();
+            return defaultValue;
+        }, defaultValue);
+        return result;
     }
 }
