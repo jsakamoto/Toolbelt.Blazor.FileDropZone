@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Toolbelt.Blazor.FileDropZone" Version="3.0.0" />
+    <PackageReference Include="Toolbelt.Blazor.FileDropZone" Version="3.0.1" />
     <!--<ProjectReference Include="..\FileDropZone\Toolbelt.Blazor.FileDropZone.csproj" />-->
   </ItemGroup>
 
