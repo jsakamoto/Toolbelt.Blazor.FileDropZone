@@ -13,6 +13,27 @@ public partial class FileDropZone : IAsyncDisposable
 
     private ElementReference _DropZoneElement;
 
+    private static bool CacheBustingEnabled() => Environment.GetEnvironmentVariable("TOOLBELT_BLAZOR_FILEDROPZONE_JSCACHEBUSTING") != "0";
+
+#if NET10_0_OR_GREATER
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        var cacheBustingQueryAsync = CacheBustingEnabled() ?
+            this.JS.GetValueAsync<bool>("navigator.onLine").AsTask().ContinueWith(static task => task.Result ? "?v=" + VersionInfo.VersionText : "") :
+            Task.FromResult("");
+
+        var module = await cacheBustingQueryAsync
+            .ContinueWith(task => this.JS.InvokeAsync<IJSObjectReference>("import", "./_content/Toolbelt.Blazor.FileDropZone/script.min.js" + task.Result).AsTask())
+            .Unwrap();
+
+        this._FileDropZoneHandler = await RunAndDisposeAsync(
+            module,
+            js => js.InvokeAsync<IJSObjectReference?>("initializeFileDropZone", this._DropZoneElement),
+            default);
+    }
+#else
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
@@ -28,6 +49,7 @@ public partial class FileDropZone : IAsyncDisposable
             js => js.InvokeAsync<IJSObjectReference?>("initializeFileDropZone", this._DropZoneElement),
             default);
     }
+#endif
 
     public async ValueTask DisposeAsync()
     {

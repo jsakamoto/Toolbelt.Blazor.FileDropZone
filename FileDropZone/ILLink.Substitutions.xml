@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <assembly fullname="Toolbelt.Blazor.FileDropZone">
+    <type feature="Toolbelt.Blazor.FileDropZone.JavaScriptCacheBusting" featurevalue="true" fullname="Toolbelt.Blazor.FileDropZone.FileDropZone">
+      <method signature="System.Boolean CacheBustingEnabled()" body="stub" value="true" />
+    </type>
+    <type feature="Toolbelt.Blazor.FileDropZone.JavaScriptCacheBusting" featurevalue="false" fullname="Toolbelt.Blazor.FileDropZone.FileDropZone">
+      <method signature="System.Boolean CacheBustingEnabled()" body="stub" value="false" />
+    </type>
+  </assembly>
+</linker>
