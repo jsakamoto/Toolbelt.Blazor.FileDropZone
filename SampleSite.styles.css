@@ -1,0 +1,97 @@
+/* /Layout.razor.rz.scp.css */
+img.package-icon[b-l3egprzagt] {
+    width: 62px;
+}
+
+[b-l3egprzagt] h1 {
+    font-size: 140%;
+}
+
+.form-area[b-l3egprzagt] {
+    /*border: solid 1px yellow;*/
+    width: 100vw;
+    max-width: 500px;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 30px;
+}
+
+    .form-area[b-l3egprzagt]  .mud-paper {
+        padding: 1px 18px;
+    }
+
+footer[b-l3egprzagt] {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+    footer select[b-l3egprzagt] {
+        margin-left: 7px;
+    }
+/* /UploadAvatorPicture.razor.rz.scp.css */
+[b-gpugcuth2g] .file-drop-zone {
+    position: relative;
+    border: dashed 2px transparent;
+    border-radius: 6px;
+    transition: border linear 0.2s;
+}
+
+    [b-gpugcuth2g] .file-drop-zone.hover {
+        border: dashed 2px var(--mud-palette-secondary);
+    }
+
+    [b-gpugcuth2g] .file-drop-zone::after {
+        content: "Drop here";
+        font-size: 24px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background-color: #fff;
+        opacity: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity ease 0.2s;
+        pointer-events: none;
+    }
+
+    [b-gpugcuth2g] .file-drop-zone.hover::after {
+        opacity: 0.8;
+    }
+
+.avatar-picture-inputfile-container[b-gpugcuth2g] {
+    white-space: nowrap;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: baseline;
+}
+
+.selected-file-name[b-gpugcuth2g] {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 10px;
+    border-bottom: solid 1px var(--mud-palette-lines-inputs);
+    padding: 6px 0 6px 0;
+}
+
+.error .caption[b-gpugcuth2g] {
+    color: var(--mud-palette-error);
+}
+
+.error .selected-file-name[b-gpugcuth2g] {
+    border-bottom-color: var(--mud-palette-error);
+}
+
+.error .mud-input-helper-text[b-gpugcuth2g] {
+    color: var(--mud-palette-error);
+}
